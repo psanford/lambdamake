@@ -1,5 +1,6 @@
-BIN=bootstrap # must be bootstrap for provided.al2 runtime
 FUNCTION_NAME=my-function-name
+ # must be bootstrap for provided.al2 runtime
+BIN=bootstrap
 VERSION=v1.0.0
 # LAMBDA_BINARY_BUCKET=
 # LAMBDA_CONF_BUCKET=
