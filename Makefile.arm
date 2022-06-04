@@ -5,6 +5,9 @@ VERSION=v1.0.0
 # LAMBDA_CONF_BUCKET=
 
 export GOARCH=arm64
+# export CGO_ENABLED=1
+# export CC=zig cc -target aarch64-linux-musl
+# export CXX=zig cc -target aarch64-linux-musl
 
 # lambda.norpc should make startup a bit faster for lambda custom (provided.al2) runtimes, which are required for arm lambda functions
 GOBUILD_TAGS=-tags netgo,sqlite_omit_load_extension,fts5,lambda.norpc
