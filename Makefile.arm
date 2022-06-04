@@ -1,7 +1,8 @@
-FUNCTION_NAME=my-function-name
+FUNCTION_NAME=
  # must be bootstrap for provided.al2 runtime
 BIN=bootstrap
 VERSION=v1.0.0
+
 # LAMBDA_BINARY_BUCKET=
 # LAMBDA_CONF_BUCKET=
 
@@ -17,14 +18,20 @@ GOBUILD_TAGS=-tags netgo,sqlite_omit_load_extension,fts5,lambda.norpc
 GOBUILD_LDFLAGS=-ldflags="-s -w -extldflags=-static -X main.buildSha=$(shell git rev-list -1 HEAD) -X main.buildEpoch=$(shell date +%s)"
 
 STATIC_RESOURCES=
+GOSRC=$(wildcard *.go) $(wildcard **/*.go)
+GOMOD=$(wildcard go.mod) $(wildcard go.sum)
 
-$(BIN): $(wildcard *.go) $(wildcard **/*.go) go.mod go.sum
-	go test .
+$(BIN): $(GOSRC) $(GOMOD)
+	go test -v ./...
 	GOARCH=arm64 go build $(GOBUILD_LDFLAGS) $(GOBUILD_TAGS) -o $(BIN)
 
 $(BIN).zip: $(BIN) $(STATIC_RESOURCES)
 	rm -f $@
 	zip -r $@ $^
+
+.PHONY: test
+test: $(GOSRC) $(GOMOD)
+	go test -v ./...
 
 .PHONY: upload
 upload: $(BIN).zip
@@ -49,3 +56,7 @@ invoke:
 .PHONY: tail_logs
 tail_logs:
 	cw tail /aws/lambda/$(FUNCTION_NAME) -b 5m
+
+.PHONY: clean
+clean:
+	rm -rf $(BIN) $(BIN).zip
