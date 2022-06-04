@@ -33,6 +33,12 @@ upload_s3: $(BIN).zip
 upload_config: $(BIN).toml
 	aws s3 cp $^ "s3://$(LAMBDA_CONF_BUCKET)/$(FUNCTION_NAME)/$(FUNCTION_NAME).toml"
 
+.PHONY: invoke
+invoke:
+	echo '{}' > /tmp/$(FUNCTION_NAME).invoke
+	aws lambda invoke --function-name $(FUNCTION_NAME) /tmp/$(FUNCTION_NAME).invoke
+	rm /tmp/$(FUNCTION_NAME).invoke
+
 .PHONY: tail_logs
 tail_logs:
 	cw tail /aws/lambda/$(FUNCTION_NAME) -b 5m
