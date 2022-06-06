@@ -22,7 +22,7 @@ GOSRC=$(wildcard *.go) $(wildcard **/*.go)
 GOMOD=$(wildcard go.mod) $(wildcard go.sum)
 
 $(BIN): $(GOSRC) $(GOMOD)
-	go test -v ./...
+	CC= CXX=	go test -v ./...
 	GOARCH=arm64 go build $(GOBUILD_LDFLAGS) $(GOBUILD_TAGS) -o $(BIN)
 
 $(BIN).zip: $(BIN) $(STATIC_RESOURCES)
