@@ -55,7 +55,7 @@ invoke:
 
 .PHONY: tail_logs
 tail_logs:
-	cw tail /aws/lambda/$(FUNCTION_NAME) -b 5m
+	cw tail /aws/lambda/$(FUNCTION_NAME) -t -b 5m
 
 .PHONY: clean
 clean:
