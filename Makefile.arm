@@ -40,7 +40,7 @@ upload: $(BIN).zip
 
 .PHONY: upload_s3
 upload_s3: $(BIN).zip
-	aws s3 cp $(BIN).zip "s3://$(LAMBDA_BINARY_BUCKET)/$(BIN)/$(VERSION)/$(BIN).zip"
+	aws s3 cp $(BIN).zip "s3://$(LAMBDA_BINARY_BUCKET)/$(FUNCTION_NAME)/$(VERSION)/$(FUNCTION_NAME).zip"
 	rm $(BIN).zip
 
 .PHONY: upload_config
