@@ -18,10 +18,11 @@ GOBUILD_TAGS=-tags netgo,sqlite_omit_load_extension,fts5,lambda.norpc
 GOBUILD_LDFLAGS=-ldflags="-s -w -extldflags=-static -X main.buildSha=$(shell git rev-list -1 HEAD) -X main.buildEpoch=$(shell date +%s)"
 
 STATIC_RESOURCES=
+BIN_STATIC_RESOURCES=
 GOSRC=$(wildcard *.go) $(wildcard **/*.go)
 GOMOD=$(wildcard go.mod) $(wildcard go.sum)
 
-$(BIN): $(GOSRC) $(GOMOD)
+$(BIN): $(GOSRC) $(GOMOD) $(BIN_STATIC_RESOURCES)
 	CC= CXX=	go test -v ./...
 	GOARCH=arm64 go build $(GOBUILD_LDFLAGS) $(GOBUILD_TAGS) -o $(BIN)
 
@@ -50,8 +51,10 @@ upload_config: $(BIN).toml
 .PHONY: invoke
 invoke:
 	echo '{}' > /tmp/$(FUNCTION_NAME).invoke
-	aws lambda invoke --function-name $(FUNCTION_NAME) /tmp/$(FUNCTION_NAME).invoke
+	aws lambda invoke --function-name $(FUNCTION_NAME) --payload fileb:///tmp/$(FUNCTION_NAME).invoke /tmp/$(FUNCTION_NAME).invoke.out
 	rm /tmp/$(FUNCTION_NAME).invoke
+	cat /tmp/$(FUNCTION_NAME).invoke.out; echo
+	rm /tmp/$(FUNCTION_NAME).invoke.out
 
 .PHONY: tail_logs
 tail_logs:
